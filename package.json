@@ -1,0 +1,27 @@
+{
+  "name": "pcat",
+  "version": "1.0.0",
+  "description": "PHOTO APP",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mustafatoprakk/nodejs-pcat.git"
+  },
+  "keywords": [
+    "photo",
+    "app",
+    "camera"
+  ],
+  "author": "Mustafa Toprak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mustafatoprakk/nodejs-pcat/issues"
+  },
+  "homepage": "https://github.com/mustafatoprakk/nodejs-pcat#readme",
+  "devDependencies": {
+    "prettier": "2.5.1"
+  }
+}
