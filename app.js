@@ -1,18 +1,27 @@
-const express = require("express")
-const path = require("path")
-const app=express()
+const express = require('express');
+const path = require('path');
+const ejs = require('ejs');
 
-app.use(express.static('public'))
+const app = express();
 
+//TEMPLATE ENGINE
+app.set('view engine', 'ejs');
 
-app.get("/", (req, res) => {
-    // call index
-    res.sendFile(path.resolve(__dirname, "temp/index.html"))
-})
+//middleware
+app.use(express.static('public'));
 
+// route
+app.get('/', (req, res) => {
+  res.render('index');
+});
+app.get('/about', (req, res) => {
+  res.render('about');
+});
+app.get('/add', (req, res) => {
+  res.render('add');
+});
 
-
-const port=3000;
+const port = 3000;
 app.listen(port, () => {
-    console.log(`Server started ${port} of port`)
-})
+  console.log(`Server started ${port} of port`);
+});
