@@ -1,9 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const fileUpload = require('express-fileupload');
+const methodOverride = require('method-override');
 const path = require('path');
 const ejs = require('ejs');
-const fs=require("fs")
+const fs = require('fs');
 const Photo = require('./models/Photos');
 
 const app = express();
@@ -22,10 +23,11 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true })); // url deki datayı okumamızı sağlıyor
 app.use(express.json());
 app.use(fileUpload());
+app.use(methodOverride('_method'));
 
 // anasayfada db deki verileri getiriyor
 app.get('/', async (req, res) => {
-  const photos = await Photo.find({}).sort("-dateCreated"); // sort -> tersten sıralar
+  const photos = await Photo.find({}).sort('-dateCreated'); // sort -> tersten sıralar
   res.render('index', { photos });
 });
 // tıklanan resmin bilgilerini gönderiyor
@@ -48,9 +50,9 @@ app.post('/photos', async (req, res) => {
   // async kayıt olana kadar bekleyecek
   //await Photo.create(req.body);
 
-  const uploadDir="public/uploads"
-  if(!fs.existsSync(uploadDir)){
-    fs.mkdirSync(uploadDir)
+  const uploadDir = 'public/uploads';
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
   }
 
   let uploadedImage = req.files.image; // get image
@@ -59,11 +61,26 @@ app.post('/photos', async (req, res) => {
   // image ve data kaydedeceği yeri gösteriyorum
   uploadedImage.mv(uploadPath, async () => {
     await Photo.create({
-      ...req.body,      // datayı al ve birde image de al
+      ...req.body, // datayı al ve birde image de al
       image: '/uploads/' + uploadedImage.name,
     });
     res.redirect('/'); // yönlendirme
   });
+});
+
+// go to edit page as id
+app.get('/photos/edit/:id', async (req, res) => {
+  const photo = await Photo.findOne({ _id: req.params.id });
+  res.render('edit', { photo });
+});
+// set post
+app.put('/photos/:id', async (req, res) => {
+  const photo = await Photo.findOne({ _id: req.params.id });
+  photo.title = req.body.title;
+  photo.desc = req.body.desc;
+  photo.save();
+
+  res.redirect(`/photos/${req.params.id}`);
 });
 
 const port = 4000;
