@@ -23,7 +23,11 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true })); // url deki datayı okumamızı sağlıyor
 app.use(express.json());
 app.use(fileUpload());
-app.use(methodOverride('_method'));
+app.use(
+  methodOverride('_method', {
+    methods: ['POST', 'GET'],
+  })
+);
 
 // anasayfada db deki verileri getiriyor
 app.get('/', async (req, res) => {
@@ -45,7 +49,7 @@ app.get('/add', (req, res) => {
   res.render('add');
 });
 
-// post
+// save data
 app.post('/photos', async (req, res) => {
   // async kayıt olana kadar bekleyecek
   //await Photo.create(req.body);
@@ -61,7 +65,7 @@ app.post('/photos', async (req, res) => {
   // image ve data kaydedeceği yeri gösteriyorum
   uploadedImage.mv(uploadPath, async () => {
     await Photo.create({
-      ...req.body, // datayı al ve birde image de al
+      ...req.body, // datayı al ve  image de al
       image: '/uploads/' + uploadedImage.name,
     });
     res.redirect('/'); // yönlendirme
@@ -73,7 +77,7 @@ app.get('/photos/edit/:id', async (req, res) => {
   const photo = await Photo.findOne({ _id: req.params.id });
   res.render('edit', { photo });
 });
-// set post
+// update
 app.put('/photos/:id', async (req, res) => {
   const photo = await Photo.findOne({ _id: req.params.id });
   photo.title = req.body.title;
@@ -81,6 +85,15 @@ app.put('/photos/:id', async (req, res) => {
   photo.save();
 
   res.redirect(`/photos/${req.params.id}`);
+});
+
+// delete
+app.delete('/photos/:id', async (req, res) => {
+  const photo = await Photo.findOne({ _id: req.params.id });
+  let deleteImage = __dirname + '/public' + photo.image;
+  fs.unlinkSync(deleteImage);
+  await Photo.findByIdAndRemove(req.params.id);
+  res.redirect('/');
 });
 
 const port = 4000;
