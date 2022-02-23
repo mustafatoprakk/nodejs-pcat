@@ -2,8 +2,20 @@ const Photo = require('../models/Photos');
 const fs = require('fs');
 
 exports.getAllDatas = async (req, res) => {
-  const photos = await Photo.find({}).sort('-dateCreated'); // sort -> tersten sıralar
-  res.render('index', { photos });
+  const page = req.query.page || 1;
+  const photoPerPage = 6;
+  const totalPhotos = await Photo.find().countDocuments();
+
+  const photos = await Photo.find({})
+    .sort('-dateCreated') // sort -> tersten sıralar
+    .skip((page - 1) * photoPerPage) // 2. sayfada 1 ve 2. fotoğrafı geç 3 ten başla
+    .limit(photoPerPage);
+
+  res.render('index', {
+    photos: photos,
+    current: page,
+    pages: Math.ceil(totalPhotos / photoPerPage), // 5 tane fotoğraf varsa 1 yukarıya yuvarla
+  });
 };
 
 exports.getData = async (req, res) => {
