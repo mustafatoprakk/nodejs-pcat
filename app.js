@@ -9,9 +9,13 @@ const pageController=require("./controller/pageController")
 const app = express();
 
 // connect db
-mongoose.connect('mongodb://localhost/pcat-db', {
+mongoose.connect('mongodb+srv://mustafa:m1u2s3t4a5t6@cluster0.mor9p.mongodb.net/pcat-db?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+}).then(()=>{
+  console.log("db successfuly connected")
+}).catch((err)=>{
+  console.log(err)
 });
 
 //TEMPLATE ENGINE
@@ -43,7 +47,7 @@ app.put('/photos/:id', photoController.updateData);
 // delete
 app.delete('/photos/:id', photoController.deleteData);
 
-const port = 4000;
+const port = process.env.port || 3000;
 app.listen(port, () => {
   console.log(`Server started ${port} of port`);
 });
