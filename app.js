@@ -47,7 +47,7 @@ app.put('/photos/:id', photoController.updateData);
 // delete
 app.delete('/photos/:id', photoController.deleteData);
 
-const port = process.env.port || 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server started ${port} of port`);
 });
